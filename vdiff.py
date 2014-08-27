@@ -60,6 +60,6 @@ def vdiff(lfile, rfile, useGUI=True):
     try:
         return call(cmd)
     except OSError as error:
-        print("Error found when running: %s" % cmd)
+        print("Error found when running: %s" % ' '.join(cmd))
         exit(str(error))
 
