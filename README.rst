@@ -13,8 +13,8 @@ Arguments
 Options
 -------
 
-   -h, --help         Show this help message and exit.
-   -g, --gui          Using gvim (rather than vim).
+-h, --help         Show this help message and exit.
+-g, --gui          Using gvim (rather than vim).
 
 
 Relevant Key Mappings

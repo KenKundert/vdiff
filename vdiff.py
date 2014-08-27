@@ -57,5 +57,9 @@ def vdiff(lfile, rfile, useGUI=True):
         + vim_mappings
         + [vim_options, vim_init, lfile, rfile]
     )
-    return call(cmd)
+    try:
+        return call(cmd)
+    except OSError as error:
+        print("Error found when running: %s" % cmd)
+        exit(str(error))
 
