@@ -115,7 +115,7 @@ def vdiff(lfile, rfile, useGUI=True):
       + [lfile, rfile]
     )
     try:
-        print("CMD: %s" % ' '.join(cmd))
+        #print("CMD: %s" % ' '.join(cmd))
         return call(cmd)
     except OSError as error:
         print("Error found when running: %s" % ' '.join(cmd))
