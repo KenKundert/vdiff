@@ -3,10 +3,11 @@
 #
 # Copyright (C) 2014 Kenneth S. Kundert
 
-"""Vdiff
+"""vdiff
 
 Opens two files in vimdiff.
-Provides single-stroke key mappings to make updating the files efficient.
+Provides single-stroke key mappings to make moving differences between two files 
+efficient.
 
 Usage:
     vdiff [options] <lfile> <rfile>
@@ -16,14 +17,7 @@ Options:
     -h, --help  Print this helpful message.
 
 Relevant Key Mappings:
-    CTRL-J      Move to next change.
-    CTRL-K      Move to previous change.
-    CTRL-O      Obtain change under cursor from other buffer.
-    CTRL-P      Push change under cursor to other buffer.
-    O           Obtain all changes from other buffer.
-    P           Push all changes to other buffer.
-    S           Save changes and quit.
-    Q           Quit without saving changes.
+{mappings}
 """
 
 # License {{{1
@@ -44,12 +38,16 @@ Relevant Key Mappings:
 # Imports {{{1
 from __future__ import print_function, division
 from docopt import docopt
-from vdiff import vdiff
-import sys
+from vdiff import vdiff, mappings
+import sys, os
 
 # Main {{{1
 try:
-    arguments = docopt(__doc__)
+    mappingSummary = '\n'.join([
+        '    %-9s %s' % (m.key, m.desc) for m in mappings
+    ])
+    cmdSummary = __doc__.format(mappings = mappingSummary)
+    arguments = docopt(cmdSummary)
     useGUI = arguments['--gui']
     lfile = arguments['<lfile>']
     rfile = arguments['<rfile>']
@@ -57,6 +55,13 @@ try:
     sys.exit(status)
 
 except KeyboardInterrupt:
+    for each in [lfile, rfile]:
+        dn, fn = os.path.split(each)
+        swpfile = os.path.join(dn, '.' + fn + '.swp')
+        try:
+            os.remove(swpfile)
+        except OSError as err:
+            print(str(err))
     sys.exit('Killed by user')
 
 # vim: set sw=4 sts=4 et:

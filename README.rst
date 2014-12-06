@@ -3,36 +3,39 @@ Vdiff
 
 Opens two files in vimdiff.
 
-Provides single-stroke key mappings to make updating files efficient.
+Provides single-stroke key mappings to make moving differences between two files 
+efficient.
 
-Arguments
----------
+Usage
+-----
 
 ``vdiff`` [options] <lfile> <rfile>
 
 Options
 -------
 
--h, --help         Show this help message and exit.
 -g, --gui          Using gvim (rather than vim).
+-h, --help         Show this help message and exit.
 
 
 Relevant Key Mappings
 ---------------------
 
-======      =============================================
-CTRL-J      Move to next change.
-CTRL-K      Move to previous change.
-CTRL-O      Obtain change under cursor from other buffer.
-CTRL-P      Push change under cursor to other buffer.
-O           Obtain all changes from other buffer.
-P           Push all changes to other buffer.
-S           Save changes and quit.
-Q           Quit without saving changes.
-======      =============================================
+==========    =========================================================
+``Ctrl-j``    Move down to next difference
+``Ctrl-k``    Move up to previous difference
+``Ctrl-o``    Obtain difference
+``Ctrl-p``    Push difference
+``{``         Update the file on the left to match the one on the right
+``}``         Update the file on the right to match the one on the left
+``S``         Save any changes in both files and quit
+``Q``         Quit without saving either file
+``=``         Make both windows the same size and toggle between them
+``+``         Update differences
+==========    =========================================================
 
 Installation
 ------------
 
-Runs only on Unix systems.  Requires Python 2.6 or later or Python 3.2.
+Runs only on Unix systems.  Requires Python 2.6 or Python 3.2 or later.
 Install by running ./install.

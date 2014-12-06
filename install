@@ -1,10 +1,10 @@
 #!/bin/csh -f
-set supportedPythonVersions=(2.7 3.3)
+set pythonVersions=(2.7 3.3)
 set packageName=vdiff
 
 rm -f install.out
 
-foreach vers ($supportedPythonVersions)
+foreach vers ($pythonVersions)
     # remove build directory from a previous install to assure a clean install
     rm -rf build
 

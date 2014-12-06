@@ -19,47 +19,104 @@
 
 # Imports {{{1
 from __future__ import print_function, division
-import sys
 from subprocess import call, Popen as popen, PIPE
+import sys, os
+
+# Map class {{{1
+class Map(object):
+    def __init__(self, key, cmd, desc):
+        self.key = key
+        self.cmd = cmd
+        self.desc = desc
+    def mapping(self):
+        if self.key.startswith('Ctrl-'):
+            key = '<C-%s>' % self.key.replace('Ctrl-', '')
+        else:
+            key = self.key
+        return ' '.join(['map', key, self.cmd])
 
 # Settings {{{1
 vim = 'gvim'
 flags = ['-d']
 mappings = [
-    ('<C-J>', ']c'),
-    ('<C-K>', '[c'),
-    ('<C-O>', 'do'),
-    ('<C-P>', 'dp'),
-    ('O', ":1,$+1diffget<CR>"),
-    ('P', ":1,$diffput<CR>"),
-    #('R', ':diffupdate<CR>'),
-        # nice, but one to many
-        # Vim allows only a limited number of this type of command
-    ('S', ':qa<CR>'),
-    ('Q', ':qa!<CR>'),
+    Map(
+        key='Ctrl-j',
+        cmd=']c',
+        desc="Move down to next difference"
+    ),
+    Map(
+        key='Ctrl-k',
+        cmd='[c',
+        desc="Move up to previous difference"
+    ),
+    Map(
+        key='Ctrl-o',
+        cmd='do',
+        desc="Obtain difference"
+    ),
+    Map(
+        key='Ctrl-p',
+        cmd='dp',
+        desc="Push difference"
+    ),
+    Map(
+        key='{',
+        cmd="+1<C-W>w:1,$+1diffget<CR>",
+        desc="Update the file on the left to match the one on the right"
+    ),
+    Map(
+        key='}',
+        cmd="+2<C-W>w:1,$+1diffget<CR>",
+        desc="Update the file on the right to match the one on the left"
+    ),
+    Map(
+        key='S',
+        cmd=':qa<CR>',
+        desc="Save any changes in both files and quit"
+    ),
+    Map(
+        key='Q',
+        cmd=':qa!<CR>',
+        desc="Quit without saving either file"
+    ),
+    Map(
+        key='=',
+        cmd='<C-w>=<C-w>w',
+        desc="Make both windows the same size and toggle between them"
+    ),
+    Map(
+        key='+',
+        cmd=':diffupdate<CR>',
+        desc="Update differences"
+    ),
 ]
 options = [
     'autowriteall',
 ]
 init = "1" # initially place cursor on first line
+settings = '/tmp/vdiff%s' % os.getuid()
 
 # Initialization {{{1
-vim_mappings = ['+map %s %s' % each for each in mappings]
-vim_options = '+set %s' % ' '.join(options)
-vim_init = '+'+init
+lines = (
+    [m.mapping() for m in mappings]
+  + ['set %s' % (' '.join(options))]
+  + [init]
+)
+with open(settings, 'w') as f:
+    f.write('\n'.join(lines) + '\n')
 
 # Edit the files {{{1
 def vdiff(lfile, rfile, useGUI=True):
     vim_flags = flags + (['-f'] if useGUI else ['-v'])
     cmd = (
         [vim]
-        + vim_flags
-        + vim_mappings
-        + [vim_options, vim_init, lfile, rfile]
+      + vim_flags
+      + ['-S', settings]
+      + [lfile, rfile]
     )
     try:
+        print("CMD: %s" % ' '.join(cmd))
         return call(cmd)
     except OSError as error:
         print("Error found when running: %s" % ' '.join(cmd))
         exit(str(error))
-
