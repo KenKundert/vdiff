@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # VDiff
 #
 # Copyright (C) 2014 Kenneth S. Kundert
@@ -38,30 +38,22 @@ Relevant Key Mappings:
 # Imports {{{1
 from __future__ import print_function, division
 from docopt import docopt
-from vdiff import vdiff, mappings
+from vdiff import Vdiff, mappings
 import sys, os
 
 # Main {{{1
-try:
-    mappingSummary = '\n'.join([
-        '    %-9s %s' % (m.key, m.desc) for m in mappings
-    ])
-    cmdSummary = __doc__.format(mappings = mappingSummary)
-    arguments = docopt(cmdSummary)
-    useGUI = arguments['--gui']
-    lfile = arguments['<lfile>']
-    rfile = arguments['<rfile>']
-    status = vdiff(lfile, rfile, useGUI)
-    sys.exit(status)
+mappingSummary = '\n'.join([
+    '    %-9s %s' % (m.key, m.desc) for m in mappings
+])
+cmdSummary = __doc__.format(mappings = mappingSummary)
+arguments = docopt(cmdSummary)
 
+vdiff = Vdiff(arguments['<lfile>'], arguments['<rfile>'], arguments['--gui'])
+
+try:
+    status = vdiff.edit()
 except KeyboardInterrupt:
-    for each in [lfile, rfile]:
-        dn, fn = os.path.split(each)
-        swpfile = os.path.join(dn, '.' + fn + '.swp')
-        try:
-            os.remove(swpfile)
-        except OSError as err:
-            print(str(err))
+    vdiff.cleanup()
     sys.exit('Killed by user')
 
 # vim: set sw=4 sts=4 et:

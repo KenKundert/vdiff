@@ -19,8 +19,9 @@
 
 # Imports {{{1
 from __future__ import print_function, division
-from subprocess import call, Popen as popen, PIPE
+from scripts import cleave, join, rm, Cmd, script_prefs, ScriptError
 import sys, os
+script_prefs.set('exit_upon_error', False)
 
 # Map class {{{1
 class Map(object):
@@ -105,18 +106,42 @@ lines = (
 with open(settings, 'w') as f:
     f.write('\n'.join(lines) + '\n')
 
-# Edit the files {{{1
-def vdiff(lfile, rfile, useGUI=True):
-    vim_flags = flags + (['-f'] if useGUI else ['-v'])
-    cmd = (
-        [vim]
-      + vim_flags
-      + ['-S', settings]
-      + [lfile, rfile]
-    )
-    try:
-        #print("CMD: %s" % ' '.join(cmd))
-        return call(cmd)
-    except OSError as error:
-        print("Error found when running: %s" % ' '.join(cmd))
-        exit(str(error))
+# Vdiff class {{{1
+class Vdiff(object):
+    def __init__(self, lfile, rfile, useGUI=True):
+        self.lfile = lfile
+        self.rfile = rfile
+        self.useGUI = useGUI
+        self.vim = None
+
+    # Edit the files {{{2
+    def edit(self):
+        vim_flags = flags + (['-f'] if self.useGUI else ['-v'])
+        cmd = (
+            [vim]
+          + vim_flags
+          + ['-S', settings]
+          + [self.lfile, self.rfile]
+        )
+        try:
+            self.vim = Cmd(cmd, modes='W')
+            #print("CMD: %s" % str(self.vim))
+            return self.vim.run()
+        except OSError as error:
+            print("Error found when running: %s" % ' '.join(cmd))
+            raise SystemExit(str(error))
+
+    # clean up if user kills us {{{2
+    def cleanup(self):
+        if self.vim:
+            self.vim.kill()
+            for each in [self.lfile, self.rfile]:
+                dn, fn = cleave(each)
+                swpfile = join(dn, '.' + fn + '.swp')
+                try:
+                    rm(swpfile)
+                except ScriptError as err:
+                    print(str(err))
+
+# vim: set sw=4 sts=4 et:
+

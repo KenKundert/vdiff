@@ -1,5 +1,5 @@
 #!/bin/csh -f
-set pythonVersions=(2.7 3.3)
+set pythonVersions=(2 3)
 set packageName=vdiff
 
 rm -f install.out
