@@ -1,6 +1,6 @@
 # scripts -- Scripting utilities
 #
-# A light-weight package with few dependencies that allows users to do             
+# A light-weight package with few dependencies that allows users to do 
 # shell-script like things relatively easily in Python.
 
 # License {{{1
@@ -24,9 +24,22 @@ from fnmatch import fnmatch
 import itertools
 import shutil
 import glob
+import codecs
 import errno
 import os
 import sys
+try:
+    unicode
+except NameError:
+    # 'unicode' is undefined, must be Python 3
+    unicode = str
+    bytes = bytes
+    basestring = (str,bytes)
+else:
+    # 'unicode' exists, must be Python 2
+    unicode = unicode
+    bytes = str
+    basestring = basestring
 
 # ScriptError Exception {{{1
 class ScriptError(Exception):
@@ -42,12 +55,12 @@ class ScriptError(Exception):
         if self.command:
             show_cmd = script_prefs.get('show_cmd_in_errors')
             if show_cmd:
-                if type(self.command) is str:
+                if isinstance(self.command, basestring):
                     cmd = self.command.split()
                 else:
                     cmd = self.command
                 cmd = ' '.join(cmd) if show_cmd == 'full' else cmd[0]
-        msg = [str(each) for each in [cmd, self.filename, self.message] if each]
+        msg = [each for each in [cmd, self.filename, self.message] if each]
         return ': '.join(msg)
 
 # Script Preferences {{{1
@@ -76,7 +89,7 @@ script_prefs = ScriptPreferences()
 # first, some utility functions {{{2
 def _flatten(listoflists):
     for pathlist in listoflists:
-        if type(pathlist) is str:
+        if isinstance(pathlist, basestring):
             pathlist = [pathlist]
         for path in pathlist:
             yield path
@@ -85,7 +98,7 @@ def _len(listoflists):
     # only returns 0, 1, or 2. Any length greater than 2 is reported as 2
     count = 0
     for pathlist in listoflists:
-        if type(pathlist) is str:
+        if isinstance(pathlist, basestring):
             pathlist = [pathlist]
         for path in pathlist:
             count += 1
@@ -94,7 +107,7 @@ def _len(listoflists):
         return count
 
 def _str(path):
-    if type(path) is str:
+    if isinstance(path, basestring):
         return path
     else:
         raise ScriptError('%s: is not scalar' % path)
@@ -179,10 +192,10 @@ def rm(*paths):
     "Remove file or directory (without complaint if does not exist)"
     for path in _flatten(paths):
         try:
-            if os.path.isdir(str(path)):
-                shutil.rmtree(str(path))
+            if os.path.isdir(path):
+                shutil.rmtree(path)
             else:
-                os.remove(str(path))
+                os.remove(path)
         except (IOError, OSError) as err:
             # don't complain if the file never existed
             if err.errno != errno.ENOENT:
@@ -192,7 +205,7 @@ def rm(*paths):
 def ln(src, link):
     "Create symbolic link."
     try:
-        os.symlink(str(src), str(link))
+        os.symlink(src, link)
     except (IOError, OSError) as err:
         raise ScriptError(err.strerror, err.filename)
 
@@ -227,7 +240,7 @@ def ls(glb='*', path=''):
     directory is assumed. If glb is not given, the directory is listed (minus 
     any dot files).  If glb is given, it is applied to the items in the 
     directory and only those items that match are returned.
-    
+
     >>> from scripts import *
 
     >>> sorted(ls('*.py'))
@@ -528,12 +541,14 @@ def addext(path, ext):
     return path + ext
 
 # fopen {{{2
-def fopen(path, mode='rU'):                                                                                          
+def fopen(path, mode='rU', encoding=True):
     """
     Open path as file with specified mode. Return file descriptor.
     """
+    if encoding is True:
+        encoding = script_prefs.get('encoding')
     try:
-        return open(path, mode)
+        return codecs.open(path, mode=mode, encoding=encoding)
     except (IOError, OSError) as err:
         raise ScriptError(err.strerror, fn=err.filename)
 
@@ -549,7 +564,7 @@ def all_paths(*fragments):
         return []
     else:
         return [os.path.join(*f) for f in itertools.product(
-            *((f,) if type(f) is str else f for f in fragments)
+            *((f,) if isinstance(f, basestring) else f for f in fragments)
         )]
 
 # expand {{{2
@@ -640,7 +655,7 @@ class Cmd(object):
 
         # I have never been able to get Popen to work properly if cmd is not
         # a string when using the shell
-        if type(self.cmd) is not str and self.use_shell:
+        if self.use_shell and not isinstance(self.cmd, basestring):
             cmd = ' '.join(self.cmd)
         else:
             cmd = self.cmd
@@ -721,7 +736,7 @@ class Cmd(object):
 
     # __str__ {{{3
     def __str__(self):
-        if type(self.cmd) is str:
+        if isinstance(self.cmd, basestring):
             return self.cmd
         else:
             return ' '.join(self.cmd)
@@ -765,7 +780,7 @@ def run(cmd, stdin=None, accept=0, shell=False):
 
     # I have never been able to get Popen to work properly if cmd is not
     # a string when using the shell
-    if type(cmd) is not str and shell:
+    if shell and not isinstance(cmd, basestring):
         cmd = ' '.join(cmd)
 
     streams = {} if stdin is None else {'stdin': subprocess.PIPE}
@@ -833,7 +848,7 @@ class _Accept(object):
     # 4. 0 or empty string:
     #       the only valid return code is 0 (default)
     def __init__(self, accept=0):
-        if type(accept) == str:
+        if isinstance(accept, basestring):
             if accept == '*':
                 accept = True
             else:
