@@ -67,7 +67,7 @@ class ScriptError(Exception):
 class ScriptPreferences(object):
     def __init__(self):
         self.preferences = {
-            'exit_upon_error': False,
+            'exit_upon_error': True,
             'expanduser': True,
             'expandvars': False,
             'encoding': 'utf-8',
@@ -232,6 +232,17 @@ def mkdir(*paths):
         except (IOError, OSError) as err:
             if err.errno != errno.EEXIST:
                 sys.exit("%s: %s." % (err.filename, err.strerror))
+
+# chmod {{{2
+def chmod(mode, *paths):
+    "Remove file or directory (without complaint if does not exist)"
+    for path in _flatten(paths):
+        try:
+            os.chmod(mode, path)
+        except (IOError, OSError) as err:
+            # don't complain if the file never existed
+            if err.errno != errno.ENOENT:
+                raise ScriptError(err.strerror, err.filename)
 
 # ls {{{2
 def ls(glb='*', path=''):
@@ -545,9 +556,11 @@ def fopen(path, mode='rU', encoding=True):
     """
     Open path as file with specified mode. Return file descriptor.
     """
-    if encoding is True:
-        encoding = script_prefs.get('encoding')
     try:
+        if 'b' in mode:
+            return open(path, mode=mode)
+        if encoding is True:
+            encoding = script_prefs.get('encoding')
         return codecs.open(path, mode=mode, encoding=encoding)
     except (IOError, OSError) as err:
         raise ScriptError(err.strerror, fn=err.filename)
