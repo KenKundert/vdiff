@@ -1,5 +1,5 @@
 #!/bin/csh -f
-set pythonVersions=(2 3)
+set pythonVersions=(3 2)
 set packageName=vdiff
 
 rm -f install.out
@@ -16,6 +16,7 @@ foreach vers ($pythonVersions)
             echo "Problems found, aborting (see install.out)"
             exit(1)
         endif
+        exit
     else
         echo "Cannot install $packageName to Python$vers, it is not available."
     endif
