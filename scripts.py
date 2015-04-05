@@ -611,7 +611,7 @@ class Cmd(object):
     Specify a command
 
     cmd may be a string or a list.
-    mode is a string that specifies various options
+    modes is a string that specifies various options
         S, s: Use, or do not use, shell
         O, o: Capture, or do not capture, stdout
         E, e: Capture, or do not capture, stderr
