@@ -109,6 +109,9 @@ with open(settings, 'w') as f:
 # Vdiff class {{{1
 class Vdiff(object):
     def __init__(self, lfile, rfile, useGUI=True):
+        if useGUI and 'DISPLAY' not in os.environ:
+            print('$DISPLAY not set, ignoring request for gvim.')
+            useGUI = False
         self.lfile = lfile
         self.rfile = rfile
         self.useGUI = useGUI
