@@ -127,7 +127,7 @@ class Vdiff(object):
             self.vim = Cmd(cmd, modes='W')
             #print("CMD: %s" % str(self.vim))
             return self.vim.run()
-        except OSError as error:
+        except ScriptError as error:
             print("Error found when running: %s" % ' '.join(cmd))
             raise SystemExit(str(error))
 
