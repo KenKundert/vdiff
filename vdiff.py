@@ -21,7 +21,7 @@
 from __future__ import print_function, division
 from scripts import cleave, join, rm, Cmd, script_prefs, ScriptError
 import sys, os
-script_prefs.set('exit_upon_error', False)
+script_prefs(exit_upon_error=False)
 
 # Map class {{{1
 class Map(object):
