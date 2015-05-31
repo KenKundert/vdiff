@@ -538,7 +538,7 @@ def extension(path):
     """
     return os.path.splitext(path)[1]
 
-# cleavext {{{2
+# cleaveext {{{2
 def cleaveext(path):
     """
     Returns root and extension as a tuple.
@@ -679,12 +679,15 @@ class Cmd(object):
         """
         import subprocess
 
-        # I have never been able to get Popen to work properly if cmd is not
-        # a string when using the shell
-        if self.use_shell and not isinstance(self.cmd, basestring):
-            cmd = ' '.join(self.cmd)
+        # Popen seems to want cmd to be a string is the shell is being use, or 
+        # a list otherwise
+        if isinstance(self.cmd, basestring):
+            cmd = self.cmd if self.use_shell else self.cmd.split()
         else:
-            cmd = self.cmd
+            if self.use_shell:
+                cmd = ' '.join(self.cmd)
+            else:
+                cmd = self.cmd
 
         # indicate streams to intercept
         streams = {}
