@@ -594,17 +594,73 @@ def expand(glb):
     for path in glob.iglob(glb):
         yield path
 
+# dexpand {{{2
+def dexpand(glb='.'):
+    for path in glob.iglob(glb):
+        if os.path.isdir(path):
+            yield path
+
 # fexpand {{{2
 def fexpand(glb):
     for path in glob.iglob(glb):
         if os.path.isfile(path):
             yield path
 
-# dexpand {{{2
-def dexpand(glb):
-    for path in glob.iglob(glb):
-        if os.path.isdir(path):
+# fwalk {{{2
+def fwalk(path, accept=None, reject=None, exclude=None):
+    """
+    Returns a generator that iterates through all the files contained in a
+    directory hierarchy.  Accept and reject criteria are glob strings, or lists
+    of glob strings. For a file to be returned its name must not match any of
+    the reject criteria if any are given, and it must match one of the accept
+    criteria, if any are given.  If no criteria are given, all files are
+    returned. Exclude is a file or directory or a list of files or directories
+    to exclude. Each is specified relative from the current working directory.
+    """
+    accept = [accept] if type(accept) == str else accept
+    reject = [reject] if type(reject) == str else reject
+
+    def yieldFile(filename):
+        filename = tail(filename)
+        if reject:
+            for criterion in reject:
+                if fnmatch(filename, criterion):
+                    return False
+        if accept:
+            for criterion in accept:
+                if fnmatch(filename, criterion):
+                    return True
+            return False
+        return True
+
+    def prepExcludes(exclude):
+        if not exclude:
+            return []
+        excludes = []
+        if type(exclude) == str:
+            exclude = [exclude]
+        for each in exclude:
+            excludes += [split(each)]
+        return excludes
+
+    def skip(path, excludes):
+        for each in excludes:
+            if split(path)[0:len(each)] == each:
+                return True
+        return False
+
+    if isfile(path):
+        if yieldFile(path):
             yield path
+    else:
+        excludes = prepExcludes(exclude)
+        for path, subdirs, files in os.walk(path):
+            for file in files:
+                filename = join(path, file)
+                if skip(filename, excludes):
+                    continue
+                if yieldFile(filename):
+                    yield filename
 
 # filter {{{2
 def filter(glb, paths):
