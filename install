@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Installs vdiff
 #
 # Requires 2.7 or Python3.3. Also requires the following packages
