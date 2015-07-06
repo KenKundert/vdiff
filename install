@@ -1,23 +1,29 @@
-#!/bin/csh -f
-set pythonVersions=(3 2)
-set packageName=vdiff
+#!/usr/bin/env bash
+# Installs vdiff
+#
+# Requires 2.7 or Python3.3. Also requires the following packages
+#     # yum install python python-docopt
+# You also need my scripts package: https://github.com/KenKundert/scripts
+#
+# Be sure to add ~/.local/bin into your path.
+cmd=vdiff
 
-rm -f install.out
+# Set python to the version of python you wish to use (ex. python2 or python3)
+python=python3
 
-foreach vers ($pythonVersions)
-    # remove build directory from a previous install to assure a clean install
-    rm -rf build
+# Determine the version of python we are using
+vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]))')
+echo "Installing $cmd to ~/.home/bin (Python$vers)."
 
-    which python$vers >& /dev/null
-    if ($status == 0) then
-        echo "Installing $packageName to Python$vers."
-        python$vers setup.py install --quiet --user >>& install.out
-        if ($status) then
-            echo "Problems found, aborting (see install.out)"
-            exit(1)
-        endif
-        exit
-    else
-        echo "Cannot install $packageName to Python$vers, it is not available."
-    endif
-end
+# remove build directories from a previous install to assure a clean install
+rm -rf build dist $cmd.egg-info install.out
+
+# install $cmd
+python$vers setup.py install --quiet --user >& install.out
+if [ $? != 0 ] ; then
+    echo "Problems found, aborting (see install.out)"
+    exit 1
+fi
+
+# remove build directories, because I like a clean directory
+rm -rf build dist $cmd.egg-info

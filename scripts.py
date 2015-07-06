@@ -955,4 +955,4 @@ class _Accept(object):
         elif type(self.accept) is tuple:
             return status not in self.accept
         else:
-            return status > self.accept
+            return status < 0 or status > self.accept
