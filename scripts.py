@@ -89,13 +89,16 @@ class ScriptPreferences(object):
 script_prefs = ScriptPreferences()
 
 # File system utility functions (cp, mv, rm, ln, touch, mkdir, ls, etc.) {{{1
-# first, some utility functions {{{2
+# first, some helper functions {{{2
 def _flatten(listoflists):
-    for pathlist in listoflists:
-        if isinstance(pathlist, basestring):
-            pathlist = [pathlist]
-        for path in pathlist:
-            yield path
+    if isinstance(listoflists, basestring):
+        yield listoflists
+    else:
+        for pathlist in listoflists:
+            if isinstance(pathlist, basestring):
+                pathlist = [pathlist]
+            for path in pathlist:
+                yield path
 
 def _len(listoflists):
     # only returns 0, 1, or 2. Any length greater than 2 is reported as 2
@@ -247,7 +250,7 @@ def chmod(mode, *paths):
     "Remove file or directory (without complaint if does not exist)"
     for path in _flatten(paths):
         try:
-            os.chmod(mode, path)
+            os.chmod(path, mode)
         except (IOError, OSError) as err:
             # don't complain if the file never existed
             if err.errno != errno.ENOENT:
@@ -692,6 +695,7 @@ class Cmd(object):
         self.use_shell = False
         self.save_stdout = False
         self.save_stderr = False
+        self.status = None
         self.wait_for_termination = True
         self.encoding = script_prefs.get('encoding') if encoding is None else encoding
         self._interpret_modes(modes)
@@ -771,7 +775,7 @@ class Cmd(object):
         self.pid = process.pid
         self.process = process
         if self.wait_for_termination:
-            return self.wait()
+            self.status = self.wait()
 
     # wait {{{3
     def wait(self):
