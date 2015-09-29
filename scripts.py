@@ -775,7 +775,7 @@ class Cmd(object):
         self.pid = process.pid
         self.process = process
         if self.wait_for_termination:
-            self.status = self.wait()
+            return self.wait()
 
     # wait {{{3
     def wait(self):
