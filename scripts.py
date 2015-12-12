@@ -813,7 +813,7 @@ class Cmd(object):
                 raise ScriptError(self.stderr.strip(), cmd=self.cmd)
             else:
                 raise ScriptError(
-                    "unexpected exit status (%d)" % self.status,
+                    "unexpected exit status (%d)." % self.status,
                     cmd=self.cmd
                 )
         return self.status
@@ -885,7 +885,7 @@ def run(cmd, stdin=None, accept=0, shell=False):
     status = process.wait()
     if _Accept(accept).unacceptable(status):
         raise ScriptError(
-            "unexpected exit status (%d)" % status, cmd=cmd
+            "unexpected exit status (%d)." % status, cmd=cmd
         )
     return status
 
