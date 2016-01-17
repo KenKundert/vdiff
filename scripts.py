@@ -224,7 +224,7 @@ def touch(*paths):
         try:
             open(path, 'ab').close()
         except (IOError, OSError) as err:
-            sys.exit("%s: %s." % (err.filename, err.strerror))
+            raise ScriptError(err.filename, err.strerror)
 
 # mkdir {{{2
 def mkdir(*paths):
@@ -237,7 +237,7 @@ def mkdir(*paths):
             os.makedirs(path)
         except (IOError, OSError) as err:
             if err.errno != errno.EEXIST:
-                sys.exit("%s: %s." % (err.filename, err.strerror))
+                raise ScriptError(err.filename, err.strerror)
 
 # cd {{{2
 cd = os.chdir
