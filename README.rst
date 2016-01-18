@@ -34,8 +34,28 @@ Relevant Key Mappings
 ``+``         Update differences
 ==========    =========================================================
 
+
+As a Package
+------------
+
+You can also use vdiff in your own Python programs. To do so, you would do 
+something like the following::
+
+    from inform import Error
+    from vdiff import Vdiff
+
+    vdiff = Vdiff(lfile="...", rfile="...", useGUI=True)
+
+    try:
+        vdiff.edit()
+    except KeyboardInterrupt:
+        vdiff.cleanup()
+    except Error as err:
+        err.report()
+
+
 Installation
 ------------
 
-Runs only on Unix systems.  Requires Python 2.6 or Python 3.2 or later.
-Install by running ./install.
+Runs only on Unix systems.  Requires Python 3.5 or later.
+Install by running './install' or 'pip3 install vdiff'.

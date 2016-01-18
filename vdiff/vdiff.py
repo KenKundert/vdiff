@@ -18,10 +18,9 @@
 
 
 # Imports {{{1
-from __future__ import print_function, division
-from scripts import cleave, join, rm, Cmd, script_prefs, ScriptError
+from inform import os_error, debug, display, error, Error, warn
+from shlib import to_path, rm, Cmd
 import sys, os
-script_prefs(exit_upon_error=False)
 
 # Map class {{{1
 class Map(object):
@@ -110,7 +109,7 @@ with open(settings, 'w') as f:
 class Vdiff(object):
     def __init__(self, lfile, rfile, useGUI=True):
         if useGUI and 'DISPLAY' not in os.environ:
-            print('$DISPLAY not set, ignoring request for gvim.')
+            warn('$DISPLAY not set, ignoring request for gvim.')
             useGUI = False
         self.lfile = lfile
         self.rfile = rfile
@@ -128,23 +127,23 @@ class Vdiff(object):
         )
         try:
             self.vim = Cmd(cmd, modes='W')
-            #print("CMD: %s" % str(self.vim))
+            #debug("CMD: %s" % str(self.vim))
             return self.vim.run()
-        except ScriptError as error:
-            print("Error found when running: %s" % ' '.join(cmd))
-            raise SystemExit(str(error))
+        except OSError as err:
+            raise Error(os_error(err))
 
     # clean up if user kills us {{{2
     def cleanup(self):
         if self.vim:
             self.vim.kill()
             for each in [self.lfile, self.rfile]:
-                dn, fn = cleave(each)
-                swpfile = join(dn, '.' + fn + '.swp')
+                path = to_path(each)
+                dn = path.root
+                fn = path.name
+                swpfile = to_path(dn, '.' + fn + '.swp')
                 try:
                     rm(swpfile)
-                except ScriptError as err:
-                    print(str(err))
+                except OSError as err:
+                    error(os_error(err))
 
 # vim: set sw=4 sts=4 et:
-

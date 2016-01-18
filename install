@@ -1,9 +1,7 @@
 #!/bin/sh
 # Installs vdiff
 #
-# Requires 2.7 or Python3.3. Also requires the following packages
-#     # yum install python python-docopt
-# You also need my scripts package: https://github.com/KenKundert/scripts
+# Requires Python3.5 or later.
 #
 # Be sure to add ~/.local/bin into your path.
 cmd=vdiff

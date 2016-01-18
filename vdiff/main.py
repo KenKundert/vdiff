@@ -35,24 +35,28 @@ Relevant Key Mappings:
 
 
 # Imports {{{1
-from __future__ import print_function, division
 from docopt import docopt
-from vdiff import Vdiff, mappings
+from inform import Inform, Error, fatal
+from .vdiff import Vdiff, mappings
 import sys, os
 
 # Main {{{1
-mappingSummary = '\n'.join([
-    '    %-9s %s' % (m.key, m.desc) for m in mappings
-])
-cmdSummary = __doc__.format(mappings = mappingSummary)
-arguments = docopt(cmdSummary)
+def main():
+    mappingSummary = '\n'.join([
+        '    %-9s %s' % (m.key, m.desc) for m in mappings
+    ])
+    cmdSummary = __doc__.format(mappings = mappingSummary)
+    arguments = docopt(cmdSummary)
+    Inform(log=False)
 
-vdiff = Vdiff(arguments['<lfile>'], arguments['<rfile>'], arguments['--gui'])
+    vdiff = Vdiff(arguments['<lfile>'], arguments['<rfile>'], arguments['--gui'])
 
-try:
-    status = vdiff.edit()
-except KeyboardInterrupt:
-    vdiff.cleanup()
-    sys.exit('Killed by user')
+    try:
+        status = vdiff.edit()
+    except KeyboardInterrupt:
+        vdiff.cleanup()
+        sys.exit('Killed by user')
+    except Error as err:
+        err.terminate()
 
 # vim: set sw=4 sts=4 et:
