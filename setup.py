@@ -8,7 +8,7 @@ setup(
     version='2.1.0',
     author='Ken Kundert',
     author_email='vdiff@nurdletech.com',
-    description='efficiently manage the differences between two files using vim',
+    description='Efficiently manage the differences between two files using vim.',
     long_description=readme,
     url='https://github.com/kenkundert/vdiff',
     license='GPLv3+',

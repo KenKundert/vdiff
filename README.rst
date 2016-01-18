@@ -1,10 +1,8 @@
 Vdiff
 =====
 
-Opens two files in vimdiff.
-
-Provides single-stroke key mappings to make moving differences between two files 
-efficient.
+Opens two files in vimdiff and provides single-stroke key mappings to make 
+moving differences between two files efficient.
 
 Usage
 -----
