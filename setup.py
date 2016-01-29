@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='vdiff',
-    version='2.1.1',
+    version='2.1.2',
     author='Ken Kundert',
     author_email='vdiff@nurdletech.com',
     description='Efficiently manage the differences between two files using vim.',
