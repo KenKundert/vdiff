@@ -10,7 +10,8 @@ setup(
     author_email='vdiff@nurdletech.com',
     description='Efficiently manage the differences between two files using vim.',
     long_description=readme,
-    url='https://github.com/kenkundert/vdiff',
+    url='http://nurdletech.com/linux-utilities/vdiff',
+    download_url='https://github.com/kenkundert/vdiff/tarball/master')
     license='GPLv3+',
     packages=[
         'vdiff',
