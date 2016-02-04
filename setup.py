@@ -1,11 +1,15 @@
 from setuptools import setup
 
+with open('README.rst') as f:
+    readme = f.read()
+
 setup(
     name='vdiff',
     version='2.1.2',
     author='Ken Kundert',
     author_email='vdiff@nurdletech.com',
     description='Efficiently manage the differences between two files using vim.',
+    long_description=readme,
     url='http://nurdletech.com/linux-utilities/vdiff',
     download_url='https://github.com/kenkundert/vdiff/tarball/master',
     license='GPLv3+',
