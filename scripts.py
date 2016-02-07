@@ -1,4 +1,4 @@
-## scripts -- Scripting utilities
+# scripts -- Scripting utilities
 #
 # A light-weight package with few dependencies that allows users to do 
 # shell-script like things relatively easily in Python.
@@ -576,8 +576,6 @@ def fopen(path, mode='rU', encoding=True):
         return codecs.open(path, mode=mode, encoding=encoding)
     except (IOError, OSError) as err:
         raise ScriptError(err.strerror, fn=err.filename)
-    except UnicodeDecodeError as err:
-        raise ScriptError(str(err), fn=err.filename)
 
 # Path list functions (all_paths, expand, filter, etc.) {{{1
 # all_paths {{{2
