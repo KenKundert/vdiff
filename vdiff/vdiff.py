@@ -127,7 +127,7 @@ class Vdiff(object):
         )
         try:
             self.vim = Cmd(cmd, modes='W')
-            #debug("CMD: %s" % str(self.vim))
+            #debug("CMD:", self.vim)
             return self.vim.run()
         except OSError as err:
             raise Error(os_error(err))
@@ -138,7 +138,7 @@ class Vdiff(object):
             self.vim.kill()
             for each in [self.lfile, self.rfile]:
                 path = to_path(each)
-                dn = path.root
+                dn = path.parent
                 fn = path.name
                 swpfile = to_path(dn, '.' + fn + '.swp')
                 try:
