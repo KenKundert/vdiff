@@ -126,7 +126,7 @@ class Vdiff(object):
           + [self.lfile, self.rfile]
         )
         try:
-            self.vim = Cmd(cmd, modes='W')
+            self.vim = Cmd(cmd, modes='W1')
             #debug("CMD:", self.vim)
             return self.vim.run()
         except OSError as err:
