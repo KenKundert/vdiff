@@ -23,8 +23,8 @@ setup(
         'docopt',
         'inform>=1.2',
         'shlib',
-        'appdirs',
-        'PyYAML',
+        'appdirs',  # optional, needed for user configuration
+        'PyYAML',   # optional, needed for user configuration
     ],
     keywords=[
         'vim',

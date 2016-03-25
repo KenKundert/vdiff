@@ -131,7 +131,7 @@ class Vdiff(object):
         settings = {}
         try:
             from appdirs import user_config_dir
-            import yaml
+            import yaml, errno
             configFileName = os.path.join(user_config_dir('vdiff'), 'config')
             try:
                 with open(configFileName) as f:
