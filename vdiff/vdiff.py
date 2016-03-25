@@ -156,9 +156,13 @@ class Vdiff(object):
                 lcontents = f.read()
             with open(self.rfile) as f:
                 rcontents = f.read()
+            return lcontents != rcontents
         except OSError as err:
             raise Error(os_error(err))
-        return lcontents != rcontents
+        except:
+            # Any other errors, just assume files differ and move on.
+            # Unicode errors can occur on old versions of CentOS.
+            return True
 
     # Edit the files {{{2
     def edit(self):
