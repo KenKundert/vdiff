@@ -24,6 +24,7 @@ setup(
         'inform>=1.2',
         'shlib',
         'appdirs',
+        'PyYAML',
     ],
     keywords=[
         'vim',

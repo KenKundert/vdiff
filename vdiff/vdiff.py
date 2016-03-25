@@ -20,9 +20,12 @@
 # Imports {{{1
 from inform import os_error, debug, display, error, Error, warn
 from shlib import to_path, rm, Cmd
-from appdirs import user_config_dir
-import yaml
 import sys, os
+
+# Defaults {{{1
+DEFAULT_GUI = True
+DEFAULT_VIM = 'gvimdiff -v'
+DEFAULT_GVIM = 'gvimdiff -f'
 
 # Map class {{{1
 class Map(object):
@@ -125,21 +128,26 @@ class Vdiff(object):
 
     # Read the defaults {{{2
     def read_defaults(self, useGUI):
-        configFileName = os.path.join(user_config_dir('vdiff'), 'config')
         settings = {}
         try:
-            with open(configFileName) as f:
-                settings = yaml.safe_load(f)
-        except (IOError, OSError) as err:
-            if err.errno != errno.ENOENT:
-                warn(os_error(err))
-        except yaml.YAMLError as err:
-            warn(err)
-        if useGUI is not None:
-            settings['gui'] = useGUI
-        self.gui = settings.get('gui', True)
-        self.vim = settings.get('vim', 'gvimdiff -v')
-        self.gvim = settings.get('gvim', 'gvimdiff -f')
+            from appdirs import user_config_dir
+            import yaml
+            configFileName = os.path.join(user_config_dir('vdiff'), 'config')
+            try:
+                with open(configFileName) as f:
+                    settings = yaml.safe_load(f)
+            except (IOError, OSError) as err:
+                if err.errno != errno.ENOENT:
+                    warn(os_error(err))
+            except yaml.YAMLError as err:
+                warn(err)
+            if useGUI is not None:
+                settings['gui'] = useGUI
+        except ImportError:
+            pass
+        self.gui = settings.get('gui', DEFAULT_GUI)
+        self.vim = settings.get('vim', DEFAULT_VIM)
+        self.gvim = settings.get('gvim', DEFAULT_GVIM)
 
     # Do the files differ {{{2
     def differ(self):
