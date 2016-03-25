@@ -97,11 +97,12 @@ options = [
     'autowriteall',
 ]
 init = [
-    "redraw",    # get rid of 'press enter to continue' message
-    "norm ]c[c", # start with cursor at first difference
-                 # actually, ]c jumps to next diff, and if there is a diff on
-                 # the first line, that would be the second diff, so use [c to
-                 # jump from there to previous diff if it exists.
+    "syntax off", # turn off syntax highlighting, conflicts with diff highlights
+    "redraw",     # get rid of 'press enter to continue' message
+    "norm ]c[c",  # start with cursor at first difference
+                  # actually, ]c jumps to next diff, and if there is a diff on
+                  # the first line, that would be the second diff, so use [c to
+                  # jump from there to previous diff if it exists.
 ]
 settings = '/tmp/vdiff%s' % os.getuid()
 
