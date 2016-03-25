@@ -23,6 +23,7 @@ setup(
         'docopt',
         'inform>=1.2',
         'shlib',
+        'appdirs',
     ],
     keywords=[
         'vim',
