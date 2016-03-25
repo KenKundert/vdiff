@@ -39,15 +39,16 @@ Relevant Key Mappings
 Defaults
 --------
 
-Defaults will be read from ~/.config/vdiff/config if it exists. This is a YAML 
-file that may contain 3 settings: vim, gvim, and gui. The first two are the 
-strings used to invoke vimdiff and gvimdiff. The third is a boolean that 
-indicates which should be the default. If gui is true, gvimdiff is used by 
-default, otherwise vimdiff is the default. An example file might contain::
+Defaults will be read from ~/.config/vdiff/config if it exists. This is a Python 
+file that is evaluated to determine the value of three variables: vimdiff, 
+gvimdiff, and gui.  The first two are the strings used to invoke vimdiff and 
+gvimdiff. The third is a boolean that indicates which should be the default. If 
+gui is true, gvimdiff is used by default, otherwise vimdiff is the default. An 
+example file might contain::
 
-    vim: gvimdiff -v
-    gvim: gvimdiff -f
-    gui: yes
+    vimdiff = 'gvimdiff -v'
+    gvimdiff = 'gvimdiff -f'
+    gui = True
 
 These values also happen to be the default defaults.
 
