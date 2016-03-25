@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='vdiff',
-    version='2.3.3',
+    version='2.3.4',
     author='Ken Kundert',
     author_email='vdiff@nurdletech.com',
     description='Efficiently manage the differences between two files using vim.',
