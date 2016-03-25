@@ -10,8 +10,11 @@ Usage:
     vdiff [options] <lfile> <rfile>
 
 Options:
-    -g, --gui   Use gvim (rather than vim).
-    -h, --help  Print this helpful message.
+    -v, --vim        Use vim (rather than default).
+    -g, --gvim       Use gvim (rather than default).
+    -f, --force      Edit the files even if they are the same.
+    -q, --quiet      Issue only error messages.
+    -h, --help       Print this helpful message.
 
 Relevant Key Mappings:
 {mappings}
@@ -36,8 +39,9 @@ Relevant Key Mappings:
 
 # Imports {{{1
 from docopt import docopt
-from inform import Inform, Error, fatal
+from inform import Inform, Error, warn, fatal, display, os_error
 from .vdiff import Vdiff, mappings
+import errno
 import sys, os
 
 # Main {{{1
@@ -45,18 +49,33 @@ def main():
     mappingSummary = '\n'.join([
         '    %-9s %s' % (m.key, m.desc) for m in mappings
     ])
+
+    # Read command line
     cmdSummary = __doc__.format(mappings = mappingSummary)
     arguments = docopt(cmdSummary)
-    Inform(log=False)
 
-    vdiff = Vdiff(arguments['<lfile>'], arguments['<rfile>'], arguments['--gui'])
+    # Configure output to user
+    Inform(log=False, quiet = arguments['--quiet'])
 
+    # Process command line arguments
+    lfile = arguments['<lfile>']
+    rfile = arguments['<rfile>']
+    useGUI = None
+    if arguments['--vim']:
+        useGUI = False
+    if arguments['--gvim']:
+        useGUI = True
+    force = arguments['--force']
+
+    # Run vdiff
+    vdiff = Vdiff(lfile, rfile, useGUI)
     try:
-        status = vdiff.edit()
+        if force or vdiff.differ():
+            vdiff.edit()
+        else:
+            display('%s and %s are the same.' % (lfile, rfile))
     except KeyboardInterrupt:
         vdiff.cleanup()
         sys.exit('Killed by user')
     except Error as err:
         err.terminate()
-
-# vim: set sw=4 sts=4 et:

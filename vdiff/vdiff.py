@@ -20,6 +20,8 @@
 # Imports {{{1
 from inform import os_error, debug, display, error, Error, warn
 from shlib import to_path, rm, Cmd
+from appdirs import user_config_dir
+import yaml
 import sys, os
 
 # Map class {{{1
@@ -36,8 +38,6 @@ class Map(object):
         return ' '.join(['map', key, self.cmd])
 
 # Settings {{{1
-vim = 'gvim'
-flags = ['-d']
 mappings = [
     Map(
         key='Ctrl-j',
@@ -93,35 +93,69 @@ mappings = [
 options = [
     'autowriteall',
 ]
-init = "1" # initially place cursor on first line
+init = [
+    "redraw",    # get rid of 'press enter to continue' message
+    "norm ]c[c", # start with cursor at first difference
+                 # actually, ]c jumps to next diff, and if there is a diff on
+                 # the first line, that would be the second diff, so use [c to
+                 # jump from there to previous diff if it exists.
+]
 settings = '/tmp/vdiff%s' % os.getuid()
 
 # Initialization {{{1
 lines = (
     [m.mapping() for m in mappings]
   + ['set %s' % (' '.join(options))]
-  + [init]
+  + init
 )
 with open(settings, 'w') as f:
     f.write('\n'.join(lines) + '\n')
 
+# vim: set sw=4 sts=4 et:
 # Vdiff class {{{1
 class Vdiff(object):
-    def __init__(self, lfile, rfile, useGUI=True):
-        if useGUI and 'DISPLAY' not in os.environ:
+    def __init__(self, lfile, rfile, useGUI=None):
+        self.read_defaults(useGUI)
+        if self.gui and 'DISPLAY' not in os.environ:
             warn('$DISPLAY not set, ignoring request for gvim.')
-            useGUI = False
+            self.gui = False
         self.lfile = lfile
         self.rfile = rfile
-        self.useGUI = useGUI
-        self.vim = None
+        self.cmd = self.gvim if self.gui else self.vim
+
+    # Read the defaults {{{2
+    def read_defaults(self, useGUI):
+        configFileName = os.path.join(user_config_dir('vdiff'), 'config')
+        settings = {}
+        try:
+            with open(configFileName) as f:
+                settings = yaml.safe_load(f)
+        except (IOError, OSError) as err:
+            if err.errno != errno.ENOENT:
+                warn(os_error(err))
+        except yaml.YAMLError as err:
+            warn(err)
+        if useGUI is not None:
+            settings['gui'] = useGUI
+        self.gui = settings.get('gui', True)
+        self.vim = settings.get('vim', 'gvimdiff -v')
+        self.gvim = settings.get('gvim', 'gvimdiff -f')
+
+    # Do the files differ {{{2
+    def differ(self):
+        try:
+            with open(self.lfile) as f:
+                lcontents = f.read()
+            with open(self.rfile) as f:
+                rcontents = f.read()
+        except OSError as err:
+            raise Error(os_error(err))
+        return lcontents != rcontents
 
     # Edit the files {{{2
     def edit(self):
-        vim_flags = flags + (['-f'] if self.useGUI else ['-v'])
         cmd = (
-            [vim]
-          + vim_flags
+            self.cmd.split()
           + ['-S', settings]
           + [self.lfile, self.rfile]
         )

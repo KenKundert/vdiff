@@ -12,8 +12,11 @@ Usage
 Options
 -------
 
--g, --gui          Using gvim (rather than vim).
--h, --help         Show this help message and exit.
+-v, --vim        Use vim (rather than default).
+-g, --gvim       Use gvim (rather than default).
+-f, --force      Edit the files even if they are the same.
+-q, --quiet      Issue only error messages.
+-h, --help       Print this helpful message.
 
 
 Relevant Key Mappings
@@ -32,6 +35,21 @@ Relevant Key Mappings
 ``+``         Update differences
 ==========    =========================================================
 
+
+Defaults
+--------
+
+Defaults will be read from ~/.config/vdiff/config if it exists. This is a YAML 
+file that may contain 3 settings: vim, gvim, and gui. The first two are the 
+strings used to invoke vimdiff and gvimdiff. The third is a boolean that 
+indicates which should be the default. If gui is true, gvimdiff is used by 
+default, otherwise vimdiff is the default. An example file might contain::
+
+    vim: gvimdiff -v
+    gvim: gvimdiff -f
+    gui: yes
+
+These values also happen to be the default defaults.
 
 As a Package
 ------------
