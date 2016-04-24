@@ -18,7 +18,7 @@
 
 
 # Imports {{{1
-from inform import os_error, debug, display, error, Error, warn
+from inform import cull, debug, display, error, Error, os_error, warn
 from shlib import to_path, rm, Cmd
 import sys, os
 
@@ -64,28 +64,28 @@ mappings = [
     ),
     Map(
         key='{',
-        cmd="+1<C-W>w:1,$+1diffget<CR>",
-        desc="Update the file on the left to match the one on the right"
+        cmd="+1<C-W>w:1,$+1diffget 2<CR>",
+        desc="Update file1 to match file2"
     ),
     Map(
         key='}',
-        cmd="+2<C-W>w:1,$+1diffget<CR>",
-        desc="Update the file on the right to match the one on the left"
+        cmd="+2<C-W>w:1,$+1diffget 1<CR>",
+        desc="Update file2 to match file1"
     ),
     Map(
         key='S',
         cmd=':qa<CR>',
-        desc="Save any changes in both files and quit"
+        desc="Save any changes in all files and quit"
     ),
     Map(
         key='Q',
         cmd=':qa!<CR>',
-        desc="Quit without saving either file"
+        desc="Quit without saving any file"
     ),
     Map(
         key='=',
         cmd='<C-w>=<C-w>w',
-        desc="Make both windows the same size and toggle between them"
+        desc="Make all panes the same size and rotate between them"
     ),
     Map(
         key='+',
@@ -118,10 +118,12 @@ with open(settings, 'w') as f:
 # vim: set sw=4 sts=4 et:
 # Vdiff class {{{1
 class Vdiff(object):
-    def __init__(self, lfile, rfile, useGUI=None):
+    def __init__(self, file1, file2, file3=None, file4=None, useGUI=None):
         self.read_defaults(useGUI)
-        self.lfile = lfile
-        self.rfile = rfile
+        self.file1 = file1
+        self.file2 = file2
+        self.file3 = file3
+        self.file4 = file4
 
     # Read the defaults {{{2
     def read_defaults(self, useGUI):
@@ -155,9 +157,9 @@ class Vdiff(object):
     # Do the files differ {{{2
     def differ(self):
         try:
-            with open(self.lfile) as f:
+            with open(self.file1) as f:
                 lcontents = f.read()
-            with open(self.rfile) as f:
+            with open(self.file2) as f:
                 rcontents = f.read()
             return lcontents != rcontents
         except OSError as err:
@@ -172,7 +174,7 @@ class Vdiff(object):
         cmd = (
             self.cmd.split()
           + ['-S', settings]
-          + [self.lfile, self.rfile]
+          + cull([self.file1, self.file2, self.file3, self.file4])
         )
         try:
             self.vim = Cmd(cmd, modes='W1')
@@ -185,7 +187,7 @@ class Vdiff(object):
     def cleanup(self):
         if self.vim:
             self.vim.kill()
-            for each in [self.lfile, self.rfile]:
+            for each in cull([self.file1, self.file2, self.file3, self.file4]):
                 path = to_path(each)
                 dn = path.parent
                 fn = path.name

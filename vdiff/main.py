@@ -7,7 +7,7 @@ Provides single-stroke key mappings to make moving differences between two files
 efficient.
 
 Usage:
-    vdiff [options] <lfile> <rfile>
+    vdiff [options] <file1> <file2> [<file3> [<file4>]]
 
 Options:
     -v, --vim        Use vim (rather than default).
@@ -58,8 +58,10 @@ def main():
     Inform(log=False, quiet = arguments['--quiet'])
 
     # Process command line arguments
-    lfile = arguments['<lfile>']
-    rfile = arguments['<rfile>']
+    file1 = arguments['<file1>']
+    file2 = arguments['<file2>']
+    file3 = arguments['<file3>']
+    file4 = arguments['<file4>']
     useGUI = None
     if arguments['--vim']:
         useGUI = False
@@ -68,12 +70,12 @@ def main():
     force = arguments['--force']
 
     # Run vdiff
-    vdiff = Vdiff(lfile, rfile, useGUI)
+    vdiff = Vdiff(file1, file2, file3, file4, useGUI)
     try:
         if force or vdiff.differ():
             vdiff.edit()
         else:
-            display('%s and %s are the same.' % (lfile, rfile))
+            display('%s and %s are the same.' % (file1, file2))
     except KeyboardInterrupt:
         vdiff.cleanup()
         sys.exit('Killed by user')
