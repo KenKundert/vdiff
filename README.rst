@@ -72,6 +72,26 @@ something like the following::
         err.report()
 
 
+Using Vdiff with Mercurial
+--------------------------
+
+To use Vdiff with Mercurial, merge the following entries into your ~/.hgrc 
+file::
+
+    [ui]
+    merge = vdiff
+
+    [extensions]
+    extdiff =
+
+    [extdiff]
+    cmd.vdiff = vdiff
+    opts.vimdiff = -g
+
+These will result in Vdiff being used whenever a merge conflict occurs. It also 
+allows you to use 'hg vdiff' to view differences between versions.
+
+
 Installation
 ------------
 
