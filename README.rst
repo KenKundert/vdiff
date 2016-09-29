@@ -59,13 +59,16 @@ As a Package
 You can also use vdiff in your own Python programs. To do so, you would do 
 something like the following::
 
-    from inform import Error
+    from inform import display, Error
     from vdiff import Vdiff
 
     vdiff = Vdiff(lfile, rfile)
 
     try:
-        vdiff.edit()
+        if vdiff.differ():
+            vdiff.edit()
+        else:
+            display('%s and %s are the same.' % (lfile, rfile))
     except KeyboardInterrupt:
         vdiff.cleanup()
     except Error as err:

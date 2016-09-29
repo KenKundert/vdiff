@@ -119,14 +119,15 @@ with open(settings, 'w') as f:
 # Vdiff class {{{1
 class Vdiff(object):
     def __init__(self, file1, file2, file3=None, file4=None, useGUI=None):
-        self.read_defaults(useGUI)
-        self.file1 = file1
-        self.file2 = file2
-        self.file3 = file3
-        self.file4 = file4
+        # cast filenames to strings so that we can support pathlib paths
+        self.useGUI = useGUI
+        self.file1 = str(file1) if file1 else None
+        self.file2 = str(file2) if file2 else None
+        self.file3 = str(file3) if file3 else None
+        self.file4 = str(file4) if file4 else None
 
     # Read the defaults {{{2
-    def read_defaults(self, useGUI):
+    def read_defaults(self):
         settings = {}
         try:
             from appdirs import user_config_dir
@@ -142,8 +143,8 @@ class Vdiff(object):
                 pass
             except OSError as err:
                 warn(os_error(err))
-            if useGUI is not None:
-                settings['gui'] = useGUI
+            if self.useGUI is not None:
+                settings['gui'] = self.useGUI
         except ImportError:
             pass
         if settings.get('gui', DEFAULT_GUI):
@@ -171,6 +172,7 @@ class Vdiff(object):
 
     # Edit the files {{{2
     def edit(self):
+        self.read_defaults()
         cmd = (
             self.cmd.split()
           + ['-S', settings]
