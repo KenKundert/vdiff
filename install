@@ -9,6 +9,9 @@ cmd=vdiff
 # Set python to the version of python you wish to use (ex. python2 or python3)
 python=python3
 
+# clean out old versions
+rm -rf ~/.local/lib/python*/site-packages/$cmd*
+
 # Determine the version of python we are using
 vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]))')
 echo "Installing $cmd to ~/.home/bin (Python$vers)."

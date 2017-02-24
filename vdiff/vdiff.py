@@ -76,6 +76,9 @@ mappings = [
         key='S',
         cmd=':qa<CR>',
         desc="Save any changes in all files and quit"
+            # this assumes that autowriteall is set
+            # use autowrite rather than forcing the write so the modification
+            # time on the file is not changed if no change occurs
     ),
     Map(
         key='Q',
@@ -99,10 +102,12 @@ options = [
 init = [
     "syntax off", # turn off syntax highlighting, conflicts with diff highlights
     "redraw",     # get rid of 'press enter to continue' message
-    "norm ]c[c",  # start with cursor at first difference
-                  # actually, ]c jumps to next diff, and if there is a diff on
-                  # the first line, that would be the second diff, so use [c to
-                  # jump from there to previous diff if it exists.
+    "norm gg]c[c",# start with cursor at first difference
+                  # gg takes cursor to top of file, to overcome Vim's tendency
+                  # to start with the cursor placed where was the last time you
+                  # edited the file. Then ]c jumps to next diff, and if there is
+                  # a diff on the first line, that would be the second diff, so
+                  # use [c to jump from there to previous diff if it exists.
 ]
 settings = '/tmp/vdiff%s' % os.getuid()
 
