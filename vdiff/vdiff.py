@@ -18,7 +18,7 @@
 
 
 # Imports {{{1
-from inform import cull, debug, display, error, Error, os_error, warn
+from inform import cull, display, error, Error, os_error, warn
 from shlib import to_path, rm, Cmd
 import sys, os
 
@@ -185,7 +185,6 @@ class Vdiff(object):
         )
         try:
             self.vim = Cmd(cmd, modes='W1')
-            #debug("CMD:", self.vim)
             return self.vim.run()
         except OSError as err:
             raise Error(os_error(err))
