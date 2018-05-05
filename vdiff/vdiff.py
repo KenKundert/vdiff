@@ -48,6 +48,13 @@ mappings = [
         desc="Move down to next difference"
     ),
     Map(
+        # Normally I map this to 'move to next file', which is death here
+        # So remap it to next difference too, but leave it undocumented
+        key='Ctrl-n',
+        cmd=']c',
+        desc="Move down to next difference"
+    ),
+    Map(
         key='Ctrl-k',
         cmd='[c',
         desc="Move up to previous difference"
@@ -64,12 +71,26 @@ mappings = [
     ),
     Map(
         key='{',
-        cmd="+1<C-W>w:1,$+1diffget 2<CR>",
+        #cmd="+1<C-W>w:1,$+1diffget 2<CR>",
+            # though documentation says the above should work if there are extra
+            # lines at the top or bottom of files, it does not.
+        cmd="+1<C-W>w:%diffget 2<CR>+2<C-W>w:%diffput 1<CR>+1<C-W>w",
         desc="Update file1 to match file2"
     ),
     Map(
         key='}',
-        cmd="+2<C-W>w:1,$+1diffget 1<CR>",
+        #cmd="+2<C-W>w:1,$+1diffget 1<CR>",
+            # though documentation says the above should work if there are extra
+            # lines at the top or bottom of files, it does not.
+        cmd="+2<C-W>w:%diffget 1<CR>+1<C-W>w:%diffput 2<CR>+1<C-W>w",
+            # +                -- diffupdate
+            # 2<C-W>w          -- move to buffer 2
+            # :%diffget 1<CR>  -- pull differences from buffer 1 to buffer 2
+            # +                -- diffupdate
+            # 1<C-W>w          -- move to buffer 1
+            # :%diffput 2<CR>  -- push differences from buffer 1 to buffer 2
+            # +                -- diffupdate
+            # 1<C-W>w          -- move to buffer 1
         desc="Update file2 to match file1"
     ),
     Map(
