@@ -22,7 +22,7 @@ setup(
     install_requires=[
         'docopt',
         'inform>=1.2',
-        'shlib',
+        'shlib>=0.8',
         'appdirs',  # optional, needed for user configuration
     ],
     keywords=[

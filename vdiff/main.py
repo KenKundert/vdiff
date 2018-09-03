@@ -41,8 +41,6 @@ Relevant Key Mappings:
 from docopt import docopt
 from inform import Inform, Error, warn, fatal, display, os_error
 from .vdiff import Vdiff, mappings
-import errno
-import sys, os
 
 # Main {{{1
 def main():
@@ -78,6 +76,6 @@ def main():
             display('%s and %s are the same.' % (file1, file2))
     except KeyboardInterrupt:
         vdiff.cleanup()
-        sys.exit('Killed by user')
+        raise SystemExit('Killed by user')
     except Error as err:
         err.terminate()

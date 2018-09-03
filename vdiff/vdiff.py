@@ -19,8 +19,9 @@
 
 # Imports {{{1
 from inform import cull, display, error, Error, os_error, warn
-from shlib import to_path, rm, Cmd
+from shlib import to_path, rm, Cmd, set_prefs
 import sys, os
+set_prefs(use_inform=True)
 
 # Defaults {{{1
 DEFAULT_GUI = True
@@ -44,13 +45,6 @@ class Map(object):
 mappings = [
     Map(
         key='Ctrl-j',
-        cmd=']c',
-        desc="Move down to next difference"
-    ),
-    Map(
-        # Normally I map this to 'move to next file', which is death here
-        # So remap it to next difference too, but leave it undocumented
-        key='Ctrl-n',
         cmd=']c',
         desc="Move down to next difference"
     ),
@@ -163,12 +157,12 @@ class Vdiff(object):
                 try:
                     compiled = compile(code, str(config_file), 'exec')
                     exec(compiled, settings)
-                except Exception as err:
-                    error(err, culprit=config_file)
+                except Exception as e:
+                    error(e, culprit=config_file)
             except FileNotFoundError:
                 pass
-            except OSError as err:
-                warn(os_error(err))
+            except OSError as e:
+                warn(os_error(e))
             if self.useGUI is not None:
                 settings['gui'] = self.useGUI
         except ImportError:
@@ -189,8 +183,8 @@ class Vdiff(object):
             with open(self.file2) as f:
                 rcontents = f.read()
             return lcontents != rcontents
-        except OSError as err:
-            raise Error(os_error(err))
+        except OSError as e:
+            raise Error(os_error(e))
         except:
             # Any other errors, just assume files differ and move on.
             # Unicode errors can occur on old versions of CentOS.
@@ -204,11 +198,8 @@ class Vdiff(object):
           + ['-S', settings]
           + cull([self.file1, self.file2, self.file3, self.file4])
         )
-        try:
-            self.vim = Cmd(cmd, modes='W1')
-            return self.vim.run()
-        except OSError as err:
-            raise Error(os_error(err))
+        self.vim = Cmd(cmd, modes='W1')
+        return self.vim.run()
 
     # clean up if user kills us {{{2
     def cleanup(self):
@@ -221,7 +212,7 @@ class Vdiff(object):
                 swpfile = to_path(dn, '.' + fn + '.swp')
                 try:
                     rm(swpfile)
-                except OSError as err:
-                    error(os_error(err))
+                except OSError as e:
+                    error(os_error(e))
 
-# vim: set sw=4 sts=4 et:
+# vim: set sw=4 sts=4 et ft=python3:
