@@ -36,6 +36,11 @@ Relevant Key Mappings
 ``+``         Update differences
 ==========    =========================================================
 
+When comparing 3 or 4 files, you must prepend the buffer number to the push or
+obtain command. The buffers are numbered from the left to the right starting
+with 1.  For example, to obtain the difference from buffer 3, move to that
+difference and type '3 Ctrl-o'.
+
 
 Defaults
 --------
