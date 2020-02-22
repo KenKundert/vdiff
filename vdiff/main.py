@@ -3,7 +3,7 @@
 """vdiff
 
 Opens two files in vimdiff.
-Provides single-stroke key mappings to make moving differences between two files 
+Provides single-stroke key mappings to make moving differences between two files
 efficient.
 
 Usage:
@@ -26,7 +26,7 @@ difference and type '3 Ctrl-o'.
 """
 
 # License {{{1
-# Copyright (C) 2014-2019 Kenneth S. Kundert
+# Copyright (C) 2014-2020 Kenneth S. Kundert
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -44,43 +44,44 @@ difference and type '3 Ctrl-o'.
 
 # Imports {{{1
 from docopt import docopt
-from inform import Inform, Error, warn, fatal, display, os_error
+
+from inform import Error, Inform, display
+
 from .vdiff import Vdiff, mappings
+
 
 # Main {{{1
 def main():
     try:
-        mappingSummary = '\n'.join([
-            '    %-9s %s' % (m.key, m.desc) for m in mappings
-        ])
+        mappingSummary = "\n".join(["    %-9s %s" % (m.key, m.desc) for m in mappings])
 
         # Read command line
-        cmdSummary = __doc__.format(mappings = mappingSummary)
+        cmdSummary = __doc__.format(mappings=mappingSummary)
         arguments = docopt(cmdSummary)
 
         # Configure output to user
-        Inform(log=False, quiet = arguments['--quiet'])
+        Inform(log=False, quiet=arguments["--quiet"])
 
         # Process command line arguments
-        file1 = arguments['<file1>']
-        file2 = arguments['<file2>']
-        file3 = arguments['<file3>']
-        file4 = arguments['<file4>']
+        file1 = arguments["<file1>"]
+        file2 = arguments["<file2>"]
+        file3 = arguments["<file3>"]
+        file4 = arguments["<file4>"]
         useGUI = None
-        if arguments['--vim']:
+        if arguments["--vim"]:
             useGUI = False
-        if arguments['--gvim']:
+        if arguments["--gvim"]:
             useGUI = True
-        force = arguments['--force']
+        force = arguments["--force"]
 
         # Run vdiff
         vdiff = Vdiff(file1, file2, file3, file4, useGUI)
         if force or vdiff.differ():
             vdiff.edit()
         else:
-            display('%s and %s are the same.' % (file1, file2))
+            display("%s and %s are the same." % (file1, file2))
     except KeyboardInterrupt:
         vdiff.cleanup()
-        raise SystemExit('Killed by user')
+        raise SystemExit("Killed by user")
     except Error as err:
         err.terminate()
