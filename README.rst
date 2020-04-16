@@ -1,7 +1,12 @@
 Vdiff
 =====
 
-Opens two files in vimdiff and provides single-stroke key mappings to make 
+:Author: Ken Kundert
+:Version: 2.4.2
+:Released: 2020-04-16
+
+
+Opens two files in *vimdiff* and provides single-stroke key mappings to make 
 moving differences between two files efficient. Up to two additional files may 
 be opened at the same time, but these are generally used for reference purposes.
 

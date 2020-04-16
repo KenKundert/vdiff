@@ -12,6 +12,7 @@ setup(
     author_email="vdiff@nurdletech.com",
     description="Efficiently manage the differences between two files using vim.",
     long_description=readme,
+    long_description_content_type='text/x-rst',
     url="http://nurdletech.com/linux-utilities/vdiff",
     download_url="https://github.com/kenkundert/vdiff/tarball/master",
     license="GPLv3+",
@@ -34,6 +35,8 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Utilities",
     ],
 )
