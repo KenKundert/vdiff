@@ -2,7 +2,7 @@ Vdiff
 =====
 
 :Author: Ken Kundert
-:Version: 2.4.3
+:Version: 2.5.0
 :Released: 2020-04-16
 
 
