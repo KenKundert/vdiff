@@ -66,23 +66,36 @@ These values also happen to be the default defaults.
 As a Package
 ------------
 
-You can also use vdiff in your own Python programs. To do so, you would do 
+You can also use *vdiff* in your own Python programs. To do so, you would do 
 something like the following::
 
     from inform import display, Error
     from vdiff import Vdiff
 
-    vdiff = Vdiff(lfile, rfile)
+    with Vdiff(l_filename, r_filename) as vdiff:
+        try:
+            if vdiff.differ():
+                vdiff.edit()
+            else:
+                display('%s and %s are the same.' % (l_filename, r_filename))
+        except KeyboardInterrupt:
+            pass
+        except Error as err:
+            err.report()
 
-    try:
-        if vdiff.differ():
-            vdiff.edit()
-        else:
-            display('%s and %s are the same.' % (lfile, rfile))
-    except KeyboardInterrupt:
-        vdiff.cleanup()
-    except Error as err:
-        err.report()
+You can also use *vdiff* to compare string::
+
+    from inform import display, Error
+    from vdiff import Vdiff
+
+    with Vdiff(l_identifier, r_identifier) as vdiff:
+        try:
+            if vdiff.differ():
+                vdiff.compare_strings(l_string, r_string):
+            else:
+                display('%s and %s are the same.' % (l_identifier, r_identifier))
+        except Error as err:
+            err.report()
 
 
 Using Vdiff with Mercurial

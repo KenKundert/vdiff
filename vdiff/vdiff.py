@@ -123,6 +123,35 @@ class Vdiff(object):
         self.file2 = str(file2) if file2 else None
         self.file3 = str(file3) if file3 else None
         self.file4 = str(file4) if file4 else None
+        self.string1_fp = self.string2_fp = None
+
+    def compare_strings(self, string1, string2):
+        """Compares two strings.
+
+        Writes them to temp files and then opens them in the difference editor.
+        """
+        from tempfile import NamedTemporaryFile
+        assert self.string1_fp is None, 'cannot call compare_strings twice.'
+        assert self.string2_fp is None, 'cannot call compare_strings twice.'
+        try:
+            self.string1_fp = NamedTemporaryFile(
+                mode = 'w+',
+                encoding = 'utf-8',
+                prefix = f'vdiff-{self.file1}-'
+            )
+            self.file1 = self.string1_fp.name
+            self.string1_fp.write(string1)
+            self.string1_fp.flush()
+            self.string2_fp = NamedTemporaryFile(
+                mode = 'w+',
+                encoding = 'utf-8',
+                prefix = f'vdiff-{self.file2}-'
+            )
+            self.file2 = self.string2_fp.name
+            self.string2_fp.write(string2)
+            self.string2_fp.flush()
+        except OSError as e:
+            raise Error(os_error(e))
 
     # Read the defaults {{{2
     def read_defaults(self):
@@ -193,6 +222,16 @@ class Vdiff(object):
                     rm(swpfile)
                 except OSError as e:
                     error(os_error(e))
+        if self.string1_fp:
+            self.string1_fp.close()
+        if self.string2_fp:
+            self.string2_fp.close()
 
+    # context manager {{{2
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.cleanup()
 
 # vim: set sw=4 sts=4 et ft=python3:

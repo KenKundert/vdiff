@@ -52,36 +52,35 @@ from .vdiff import Vdiff, mappings
 
 # Main {{{1
 def main():
-    try:
-        mappingSummary = "\n".join(["    %-9s %s" % (m.key, m.desc) for m in mappings])
+    mappingSummary = "\n".join(["    %-9s %s" % (m.key, m.desc) for m in mappings])
 
-        # Read command line
-        cmdSummary = __doc__.format(mappings=mappingSummary)
-        arguments = docopt(cmdSummary)
+    # Read command line
+    cmdSummary = __doc__.format(mappings=mappingSummary)
+    arguments = docopt(cmdSummary)
 
-        # Configure output to user
-        Inform(log=False, quiet=arguments["--quiet"])
+    # Configure output to user
+    Inform(log=False, quiet=arguments["--quiet"])
 
-        # Process command line arguments
-        file1 = arguments["<file1>"]
-        file2 = arguments["<file2>"]
-        file3 = arguments["<file3>"]
-        file4 = arguments["<file4>"]
-        useGUI = None
-        if arguments["--vim"]:
-            useGUI = False
-        if arguments["--gvim"]:
-            useGUI = True
-        force = arguments["--force"]
+    # Process command line arguments
+    file1 = arguments["<file1>"]
+    file2 = arguments["<file2>"]
+    file3 = arguments["<file3>"]
+    file4 = arguments["<file4>"]
+    useGUI = None
+    if arguments["--vim"]:
+        useGUI = False
+    if arguments["--gvim"]:
+        useGUI = True
+    force = arguments["--force"]
 
-        # Run vdiff
-        vdiff = Vdiff(file1, file2, file3, file4, useGUI)
-        if force or vdiff.differ():
-            vdiff.edit()
-        else:
-            display("%s and %s are the same." % (file1, file2))
-    except KeyboardInterrupt:
-        vdiff.cleanup()
-        raise SystemExit("Killed by user")
-    except Error as err:
-        err.terminate()
+    # Run vdiff
+    with Vdiff(file1, file2, file3, file4, useGUI) as vdiff:
+        try:
+            if force or vdiff.differ():
+                vdiff.edit()
+            else:
+                display("%s and %s are the same." % (file1, file2))
+        except KeyboardInterrupt:
+            raise SystemExit("Killed by user")
+        except Error as e:
+            e.terminate()
