@@ -124,6 +124,7 @@ class Vdiff(object):
         self.file3 = str(file3) if file3 else None
         self.file4 = str(file4) if file4 else None
         self.string1_fp = self.string2_fp = None
+        self.vim = None
 
     def compare_strings(self, string1, string2):
         """Compares two strings.
