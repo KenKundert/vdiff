@@ -1,7 +1,7 @@
 # VDiff
 
 # License {{{1
-# Copyright (C) 2014-2020 Kenneth S. Kundert
+# Copyright (C) 2014-2021 Kenneth S. Kundert
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -50,6 +50,13 @@ class Map(object):
 mappings = [
     Map(key="Ctrl-j", cmd="]c", desc="Move down to next difference"),
     Map(key="Ctrl-k", cmd="[c", desc="Move up to previous difference"),
+    Map(
+        # Normally I map this to 'move to next file', which is death here.
+        # So remap it to next difference too, but leave it undocumented.
+        key="Ctrl-n",
+        cmd="]c",
+        desc="Move down to next difference",
+    ),
     Map(key="Ctrl-o", cmd="do", desc="Obtain difference"),
     Map(key="Ctrl-p", cmd="dp", desc="Push difference"),
     Map(
@@ -129,7 +136,7 @@ class Vdiff(object):
     def compare_strings(self, string1, string2):
         """Compares two strings.
 
-        Writes them to temp files and then opens them in the difference editor.
+        Writes them to temp files allowing you to open them in the difference editor.
         """
         from tempfile import NamedTemporaryFile
         assert self.string1_fp is None, 'cannot call compare_strings twice.'
