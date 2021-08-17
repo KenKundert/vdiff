@@ -20,7 +20,7 @@ echo "Installing $cmd to ~/.home/bin (Python$vers)."
 rm -rf build dist $cmd.egg-info install.out
 
 # install $cmd
-python$vers setup.py install --quiet --user >& install.out
+python$vers setup.py install --quiet --user 2>&1 > install.out
 if [ $? != 0 ] ; then
     echo "Problems found, aborting (see install.out)"
     exit 1

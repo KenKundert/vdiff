@@ -6,26 +6,27 @@ with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
-    name="vdiff",
-    version="2.5.1",
-    author="Ken Kundert",
-    author_email="vdiff@nurdletech.com",
-    description="Efficiently manage the differences between two files using vim.",
-    long_description=readme,
-    long_description_content_type='text/x-rst',
-    url="http://nurdletech.com/linux-utilities/vdiff",
-    download_url="https://github.com/kenkundert/vdiff/tarball/master",
-    license="GPLv3+",
-    packages=["vdiff"],
-    entry_points={"console_scripts": ["vdiff=vdiff.main:main"]},
-    install_requires=[
+    name = "vdiff",
+    version = "2.5.1",
+    author = "Ken Kundert",
+    author_email = "vdiff@nurdletech.com",
+    description = "Efficiently manage the differences between two files using vim.",
+    long_description = readme,
+    long_description_content_type = 'text/x-rst',
+    url = "http://nurdletech.com/linux-utilities/vdiff",
+    download_url = "https://github.com/kenkundert/vdiff/tarball/master",
+    packages = ["vdiff"],
+    entry_points = {"console_scripts": ["vdiff=vdiff.main:main"]},
+    install_requires = [
         "docopt",
         "inform>=1.2",
         "shlib>=0.8",
         "appdirs",  # optional, needed for user configuration
     ],
-    keywords=["vim", "diff"],
-    classifiers=[
+    zip_safe = True,
+    license = "GPLv3+",
+    keywords = ["vim", "diff"],
+    classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Intended Audience :: End Users/Desktop",
