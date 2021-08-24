@@ -121,5 +121,5 @@ allows you to use 'hg vdiff' to view differences between versions.
 Installation
 ------------
 
-Runs only on Unix systems.  Requires Python 3.5 or later.
+Runs only on Unix systems.  Requires Python 3.6 or later.
 Install by running './install' or 'pip3 install vdiff'.

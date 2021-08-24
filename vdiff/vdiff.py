@@ -20,7 +20,7 @@
 # Imports {{{1
 import os
 
-from inform import Error, cull, error, os_error, warn
+from inform import Error, error, os_error, warn
 from shlib import Cmd, rm, set_prefs, to_path
 
 set_prefs(use_inform=True)
@@ -123,43 +123,23 @@ with open(settings, "w") as f:
 # vim: set sw=4 sts=4 et:
 # Vdiff class {{{1
 class Vdiff(object):
-    def __init__(self, file1, file2, file3=None, file4=None, useGUI=None):
+    def __init__(self, *paths, useGUI=None):
         # cast filenames to strings so that we can support pathlib paths
         self.useGUI = useGUI
-        self.file1 = str(file1) if file1 else None
-        self.file2 = str(file2) if file2 else None
-        self.file3 = str(file3) if file3 else None
-        self.file4 = str(file4) if file4 else None
+        self.paths = [to_path(p) for p in paths if p]
+        if len(self.paths) < 2:
+            raise Error('too few paths, at least two are required.')
+        if len(self.paths) > 4:
+            raise Error('too many paths, no more than four are allowed.')
         self.string1_fp = self.string2_fp = None
         self.vim = None
-
-    def compare_strings(self, string1, string2):
-        """Compares two strings.
-
-        Writes them to temp files allowing you to open them in the difference editor.
-        """
-        from tempfile import NamedTemporaryFile
-        assert self.string1_fp is None, 'cannot call compare_strings twice.'
-        assert self.string2_fp is None, 'cannot call compare_strings twice.'
-        try:
-            self.string1_fp = NamedTemporaryFile(
-                mode = 'w+',
-                encoding = 'utf-8',
-                prefix = f'vdiff-{self.file1}-'
-            )
-            self.file1 = self.string1_fp.name
-            self.string1_fp.write(string1)
-            self.string1_fp.flush()
-            self.string2_fp = NamedTemporaryFile(
-                mode = 'w+',
-                encoding = 'utf-8',
-                prefix = f'vdiff-{self.file2}-'
-            )
-            self.file2 = self.string2_fp.name
-            self.string2_fp.write(string2)
-            self.string2_fp.flush()
-        except OSError as e:
-            raise Error(os_error(e))
+        self.all_are_files = all(p.is_file() for p in self.paths)
+        if not self.all_are_files:
+            if all(p.is_dir() for p in self.paths):
+                if len(self.paths) > 2:
+                    raise Error('too many directories, no more than two are allowed.')
+            else:
+                raise Error('arguments are a mix of files and directories.')
 
     # Read the defaults {{{2
     def read_defaults(self):
@@ -194,11 +174,15 @@ class Vdiff(object):
     # Do the files differ {{{2
     def differ(self):
         try:
-            with open(self.file1) as f:
-                lcontents = f.read()
-            with open(self.file2) as f:
-                rcontents = f.read()
-            return lcontents != rcontents
+            if self.all_are_files:
+                with open(self.paths[0]) as f:
+                    lcontents = f.read()
+                with open(self.paths[1]) as f:
+                    rcontents = f.read()
+                return lcontents != rcontents
+            else:
+                # currently do not bother to check that directories differs
+                return True
         except OSError as e:
             raise Error(os_error(e))
         except:  # noqa: E722
@@ -209,20 +193,53 @@ class Vdiff(object):
     # Edit the files {{{2
     def edit(self):
         self.read_defaults()
+        cmdline_options = ["-S", settings]
+        paths = [str(p) for p in self.paths]
+        if not self.all_are_files:
+            cmdline_options += ["-c", f'DirDiff {paths[0]} {paths[1]}']
+            paths = []
         cmd = (
             self.cmd.split()
-            + ["-S", settings]
-            + cull([self.file1, self.file2, self.file3, self.file4])
+            + cmdline_options
+            + paths
         )
-        self.vim = Cmd(cmd, modes="W1")
+        self.vim = Cmd(cmd, modes="soeW1")
         return self.vim.run()
+
+    # compare strings {{{2
+    def compare_strings(self, string1, string2):
+        """Compares two strings.
+
+        Writes them to temp files allowing you to open them in the difference editor.
+        """
+        from tempfile import NamedTemporaryFile
+        assert self.string1_fp is None, 'cannot call compare_strings twice.'
+        assert self.string2_fp is None, 'cannot call compare_strings twice.'
+        try:
+            self.string1_fp = NamedTemporaryFile(
+                mode = 'w+',
+                encoding = 'utf-8',
+                prefix = f'vdiff-{self.paths[0]!s}-'
+            )
+            self.file1 = self.string1_fp.name
+            self.string1_fp.write(string1)
+            self.string1_fp.flush()
+            self.string2_fp = NamedTemporaryFile(
+                mode = 'w+',
+                encoding = 'utf-8',
+                prefix = f'vdiff-{self.paths[1]!s}-'
+            )
+            self.file2 = self.string2_fp.name
+            self.string2_fp.write(string2)
+            self.string2_fp.flush()
+        except OSError as e:
+            raise Error(os_error(e))
 
     # clean up if user kills us {{{2
     def cleanup(self):
         if self.vim:
             self.vim.kill()
-            for each in cull([self.file1, self.file2, self.file3, self.file4]):
-                path = to_path(each)
+            for path in self.paths:
                 dn = path.parent
                 fn = path.name
                 swpfile = to_path(dn, "." + fn + ".swp")

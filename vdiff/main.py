@@ -7,7 +7,7 @@ Provides single-stroke key mappings to make moving differences between two files
 efficient.
 
 Usage:
-    vdiff [options] <file1> <file2> [<file3> [<file4>]]
+    vdiff [options] <path1> <path2> [<file3> [<file4>]]
 
 Options:
     -v, --vim        Use vim (rather than default).
@@ -21,8 +21,18 @@ Relevant Key Mappings:
 
 When comparing 3 or 4 files, you must prepend the buffer number to the push or
 obtain command. The buffers are numbered from the left to the right starting
-with 1.  For example, to obtain the difference from buffer 3, move to that
-difference and type '3 Ctrl-o'.
+with 1.  For example, to obtain the difference between buffer 1 and buffer 3,
+move to buffer 1 and type '3 ctrl-o'.  You can used ":ls" to list the available
+buffers.
+
+Comparing Directories:
+Rather than files, the paths given may be directories, in which case there
+should only be two.  In this case three panes will be opened, the top two
+perform the differencing between two files, and the lower pane allows you to
+select the files to compare.  You can use "ctrl-w T" to shift this third pane to
+a new tab, and then "gt" to switch between tabs.  After synchronizing two files,
+you should use :wa rather than S to write the files if you wish to do
+comparisons of additional files.
 """
 
 # License {{{1
@@ -62,8 +72,8 @@ def main():
     Inform(log=False, quiet=arguments["--quiet"])
 
     # Process command line arguments
-    file1 = arguments["<file1>"]
-    file2 = arguments["<file2>"]
+    path1 = arguments["<path1>"]
+    path2 = arguments["<path2>"]
     file3 = arguments["<file3>"]
     file4 = arguments["<file4>"]
     useGUI = None
@@ -74,12 +84,12 @@ def main():
     force = arguments["--force"]
 
     # Run vdiff
-    with Vdiff(file1, file2, file3, file4, useGUI) as vdiff:
+    with Vdiff(path1, path2, file3, file4, useGUI=useGUI) as vdiff:
         try:
             if force or vdiff.differ():
                 vdiff.edit()
             else:
-                display("%s and %s are the same." % (file1, file2))
+                display("%s and %s are the same." % (path1, path2))
         except KeyboardInterrupt:
             raise SystemExit("Killed by user")
         except Error as e:
