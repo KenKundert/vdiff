@@ -1,4 +1,4 @@
-__version__ = "2.5.1"
-__released__ = "2020-10-19"
+__version__ = "2.5.2"
+__released__ = "2021-08-24"
 
 from .vdiff import Vdiff
