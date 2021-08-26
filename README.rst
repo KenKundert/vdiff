@@ -101,8 +101,8 @@ You can also use *vdiff* to compare string::
 Using Vdiff with Mercurial
 --------------------------
 
-To use Vdiff with Mercurial, merge the following entries into your ~/.hgrc 
-file::
+To use Vdiff with `Mercurial <https://www.mercurial-scm.org>`_ , merge the 
+following entries into your ~/.hgrc file::
 
     [ui]
     merge = vdiff
@@ -116,6 +116,31 @@ file::
 
 These will result in Vdiff being used whenever a merge conflict occurs. It also 
 allows you to use 'hg vdiff' to view differences between versions.
+
+
+Using Vdiff with Git
+--------------------
+
+To use Vdiff with `Git <https://git-scm.com>`_ , merge the following entries 
+into your ~/.gitconfig file::
+
+    [merge]
+        tool = vdiff
+    [mergetool "vdiff"]
+        cmd = vdiff_executable $LOCAL $REMOTE
+
+These will result in Vdiff being used whenever a merge conflict occurs.
+
+
+Using Vdiff with Emborg
+-----------------------
+
+To use Vdiff with `Emborg <https://emborg.readthedocs.io>`_ , merge the 
+following entries into your ~/.config/emborg/settings file::
+
+    manage_diffs_cmd = "vdiff -g"
+
+These will result in Vdiff being used for interactive compare operations.
 
 
 Installation
