@@ -139,7 +139,23 @@ class Vdiff(object):
                 if len(self.paths) > 2:
                     raise Error('too many directories, no more than two are allowed.')
             else:
-                raise Error('arguments are a mix of files and directories.')
+                codicils = []
+                for p in self.paths:
+                    if p.is_dir():
+                        kind = 'dir'
+                    elif p.is_file():
+                        kind = 'file'
+                    elif not p.exists():
+                        kind = 'missing'
+                    else:
+                        kind = 'unknown'
+                    codicils.append(f"{kind}: {p!s}")
+                raise Error(
+                    'Arguments are incompatible or not found.',
+                    'They should all be existing files or directories, not a mix.',
+                    codicil = codicils,
+                    sep = '\n',
+                )
 
     # Read the defaults {{{2
     def read_defaults(self):

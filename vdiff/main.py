@@ -84,13 +84,13 @@ def main():
     force = arguments["--force"]
 
     # Run vdiff
-    with Vdiff(path1, path2, file3, file4, useGUI=useGUI) as vdiff:
-        try:
+    try:
+        with Vdiff(path1, path2, file3, file4, useGUI=useGUI) as vdiff:
             if force or vdiff.differ():
                 vdiff.edit()
             else:
                 display("%s and %s are the same." % (path1, path2))
-        except KeyboardInterrupt:
-            raise SystemExit("Killed by user")
-        except Error as e:
-            e.terminate()
+    except KeyboardInterrupt:
+        raise SystemExit("Killed by user")
+    except Error as e:
+        e.terminate()
