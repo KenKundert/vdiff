@@ -2,8 +2,8 @@ Vdiff
 =====
 
 :Author: Ken Kundert
-:Version: 2.5.2
-:Released: 2021-08-24
+:Version: 2.6.0
+:Released: 2021-08-25
 
 
 Opens two files in *vimdiff* and provides single-stroke key mappings to make 
