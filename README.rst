@@ -140,7 +140,7 @@ following entries into your ~/.config/emborg/settings file::
 
     manage_diffs_cmd = "vdiff -g"
 
-These will result in Vdiff being used for interactive compare operations.
+This results in Vdiff being used for interactive compare operations.
 
 
 Installation
