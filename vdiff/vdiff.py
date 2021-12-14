@@ -106,11 +106,13 @@ init = [
     "syntax off",  # turn off syntax highlighting, conflicts with diff highlights
     "redraw",  # get rid of 'press enter to continue' message
     "norm gg]c[c",  # start with cursor at first difference
-    # gg takes cursor to top of file, to overcome Vim's tendency
-    # to start with the cursor placed where was the last time you
-    # edited the file. Then ]c jumps to next diff, and if there is
-    # a diff on the first line, that would be the second diff, so
-    # use [c to jump from there to previous diff if it exists.
+        # gg takes cursor to top of file, to overcome Vim's tendency
+        # to start with the cursor placed where was the last time you
+        # edited the file. Then ]c jumps to next diff, and if there is
+        # a diff on the first line, that would be the second diff, so
+        # use [c to jump from there to previous diff if it exists.
+    "norm ",  # Vim sometimes starts in visual mode, kill it if needed
+        # do not combine this with previous norm commands
 ]
 settings = "/tmp/vdiff%s" % os.getuid()
 
