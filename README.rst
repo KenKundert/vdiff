@@ -50,16 +50,16 @@ difference and type '3 Ctrl-o'.
 Defaults
 --------
 
-Defaults will be read from ~/.config/vdiff/config if it exists. This is a Python 
-file that is evaluated to determine the value of three variables: vimdiff, 
-gvimdiff, and gui.  The first two are the strings used to invoke vimdiff and 
-gvimdiff. The third is a boolean that indicates which should be the default. If 
-gui is true, gvimdiff is used by default, otherwise vimdiff is the default. An 
-example file might contain::
+Defaults will be read from ~/.config/vdiff/settings.nt if it exists. This is 
+a NestedText_ file can contain three variables: *vimdiff*, *gvimdiff*, and 
+*gui*.  The first two contain the commands used to invoke vimdiff and gvimdiff.  
+The third is a Boolean that indicates which should be the default. If *gui* is 
+*yes*, gvimdiff is used by default, otherwise vimdiff is the default. An example 
+file might contain::
 
-    vimdiff = 'gvimdiff -v'
-    gvimdiff = 'gvimdiff -f'
-    gui = True
+    vimdiff: gvimdiff -v
+    gvimdiff: gvimdiff -f
+    gui: yes
 
 These values also happen to be the default defaults.
 
@@ -101,8 +101,8 @@ You can also use *vdiff* to compare string::
 Using Vdiff with Mercurial
 --------------------------
 
-To use Vdiff with `Mercurial <https://www.mercurial-scm.org>`_ , merge the 
-following entries into your ~/.hgrc file::
+To use Vdiff with Mercurial_ , merge the following entries into your ~/.hgrc 
+file::
 
     [ui]
     merge = vdiff
@@ -121,8 +121,8 @@ allows you to use 'hg vdiff' to view differences between versions.
 Using Vdiff with Git
 --------------------
 
-To use Vdiff with `Git <https://git-scm.com>`_ , merge the following entries 
-into your ~/.gitconfig file::
+To use Vdiff with Git_ , merge the following entries into your ~/.gitconfig 
+file::
 
     [merge]
         tool = vdiff
@@ -135,8 +135,8 @@ These will result in Vdiff being used whenever a merge conflict occurs.
 Using Vdiff with Emborg
 -----------------------
 
-To use Vdiff with `Emborg <https://emborg.readthedocs.io>`_ , merge the 
-following entries into your ~/.config/emborg/settings file::
+To use Vdiff with Emborg_ , merge the following entries into your 
+~/.config/emborg/settings file::
 
     manage_diffs_cmd = "vdiff -g"
 
@@ -148,3 +148,9 @@ Installation
 
 Runs only on Unix systems.  Requires Python 3.6 or later.
 Install by running './install' or 'pip3 install vdiff'.
+
+
+.. _NestedText: https://nestedtext.org
+.. _Mercurial: https://www.mercurial-scm.org
+.. _Git: https://git-scm.com
+.. _Emborg: https://emborg.readthedocs.io

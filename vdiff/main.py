@@ -54,9 +54,7 @@ comparisons of additional files.
 
 # Imports {{{1
 from docopt import docopt
-
 from inform import Error, Inform, display
-
 from .vdiff import Vdiff, mappings
 
 

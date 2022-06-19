@@ -20,6 +20,7 @@ setup(
     install_requires = [
         "docopt",
         "inform>=1.2",
+        "nestedtext",
         "shlib>=0.8",
         "appdirs",  # optional, needed for user configuration
     ],

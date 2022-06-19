@@ -1,6 +1,7 @@
 *.py[co]
 .*.swp
 install.out
+.bump.cfg.nt
 
 # Packages
 *.egg

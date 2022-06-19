@@ -22,11 +22,13 @@ import os
 
 from inform import Error, error, os_error, warn
 from shlib import Cmd, rm, set_prefs, to_path
+from appdirs import user_config_dir
+import nestedtext as nt
 
 set_prefs(use_inform=True)
 
 # Defaults {{{1
-DEFAULT_GUI = True
+DEFAULT_GUI = False
 DEFAULT_VIM = "gvimdiff -v"
 DEFAULT_GVIM = "gvimdiff -f"
 
@@ -159,35 +161,33 @@ class Vdiff(object):
                     sep = '\n',
                 )
 
-    # Read the defaults {{{2
-    def read_defaults(self):
-        settings = {}
+    # Read the configuration {{{2
+    def read_config(self):
+        config = {}
         try:
-            from appdirs import user_config_dir
-
-            config_file = to_path(user_config_dir("vdiff"), "config")
+            settings_file = to_path(user_config_dir("vdiff"), "settings.nt")
             try:
-                code = config_file.read_text()
-                try:
-                    compiled = compile(code, str(config_file), "exec")
-                    exec(compiled, settings)
-                except Exception as e:
-                    error(e, culprit=config_file)
+                config = nt.load(settings_file, 'dict')
             except FileNotFoundError:
                 pass
+            except nt.NestedTextError as e:
+                e.report()
             except OSError as e:
                 warn(os_error(e))
-            if self.useGUI is not None:
-                settings["gui"] = self.useGUI
+            if self.useGUI is None:
+                if 'gui' in config:
+                    self.useGUI = config['gui'].lower() in ['y', 'yes']
+                else:
+                    self.useGUI = DEFAULT_GUI
         except ImportError:
             pass
-        if settings.get("gui", DEFAULT_GUI):
+        if self.useGUI:
             if "DISPLAY" not in os.environ:
                 warn("$DISPLAY not set, ignoring request for gvim.")
             else:
-                self.cmd = settings.get("gvimdiff", DEFAULT_GVIM)
+                self.cmd = config.get("gvimdiff", DEFAULT_GVIM)
                 return
-        self.cmd = settings.get("vimdiff", DEFAULT_VIM)
+        self.cmd = config.get("vimdiff", DEFAULT_VIM)
 
     # Do the files differ {{{2
     def differ(self):
@@ -210,7 +210,7 @@ class Vdiff(object):
 
     # Edit the files {{{2
     def edit(self):
-        self.read_defaults()
+        self.read_config()
         cmdline_options = ["-S", settings]
         paths = [str(p) for p in self.paths]
         if not self.all_are_files:
