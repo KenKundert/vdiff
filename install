@@ -1,30 +1,4 @@
 #!/bin/sh
-# Installs vdiff
-#
-# Requires Python3.5 or later.
-#
-# Be sure to add ~/.local/bin into your path.
-cmd=vdiff
+pip --quiet install --user --upgrade .
 
-# Set python to the version of python you wish to use (ex. python2 or python3)
-python=python3
-
-# clean out old versions
-rm -rf ~/.local/lib/python*/site-packages/$cmd*
-
-# Determine the version of python we are using
-vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]))')
-echo "Installing $cmd to ~/.home/bin (Python$vers)."
-
-# remove build directories from a previous install to assure a clean install
-rm -rf build dist $cmd.egg-info install.out
-
-# install $cmd
-python$vers setup.py install --quiet --user 2>&1 > install.out
-if [ $? != 0 ] ; then
-    echo "Problems found, aborting (see install.out)"
-    exit 1
-fi
-
-# remove build directories, because I like a clean directory
-rm -rf build dist $cmd.egg-info
+rm -rf build dist *.egg-info
