@@ -19,9 +19,9 @@ setup(
     entry_points = {"console_scripts": ["vdiff=vdiff.main:main"]},
     install_requires = [
         "docopt",
-        "inform>=1.2",
+        "inform",
         "nestedtext",
-        "shlib>=0.8",
+        "shlib",
         "appdirs",  # optional, needed for user configuration
     ],
     zip_safe = True,

@@ -83,7 +83,7 @@ something like the following::
         except Error as err:
             err.report()
 
-You can also use *vdiff* to compare string::
+You can also use *vdiff* to compare strings::
 
     from inform import display, Error
     from vdiff import Vdiff
